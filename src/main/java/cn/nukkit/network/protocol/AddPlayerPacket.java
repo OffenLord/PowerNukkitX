@@ -5,6 +5,7 @@ import cn.nukkit.api.PowerNukkitXOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.entity.data.EntityMetadata;
 import cn.nukkit.item.Item;
+import cn.nukkit.network.protocol.types.EntityLink;
 import cn.nukkit.network.protocol.types.PropertySyncData;
 import cn.nukkit.utils.Binary;
 import lombok.ToString;
@@ -42,7 +43,7 @@ public class AddPlayerPacket extends DataPacket {
     @PowerNukkitXOnly
     @Since("1.19.40-r1")
     public PropertySyncData syncedProperties = new PropertySyncData(new int[]{}, new float[]{});
-    //public EntityLink links = new EntityLink[0];
+    public EntityLink[] links = EntityLink.EMPTY_ARRAY;
     public String deviceId = "";
     public int buildPlatform = -1;
 
@@ -92,7 +93,10 @@ public class AddPlayerPacket extends DataPacket {
         this.putLInt(63); // abilityValues - survival abilities
         this.putLFloat(0.1f); // flySpeed
         this.putLFloat(0.05f); // walkSpeed
-        this.putUnsignedVarInt(0); //TODO: Entity links
+        this.putUnsignedVarInt(this.links.length);
+        for (EntityLink entityLink : this.links) {
+            this.putEntityLink(entityLink);
+        }
         this.putString(deviceId);
         this.putLInt(buildPlatform);
     }

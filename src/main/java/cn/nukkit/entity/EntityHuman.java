@@ -14,6 +14,7 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.AddPlayerPacket;
 import cn.nukkit.network.protocol.RemoveEntityPacket;
 import cn.nukkit.network.protocol.SetEntityLinkPacket;
+import cn.nukkit.network.protocol.types.EntityLink;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
@@ -187,20 +188,16 @@ public class EntityHuman extends EntityHumanType {
             pk.pitch = (float) this.pitch;
             pk.item = this.getInventory().getItemInHand();
             pk.metadata = this.dataProperties;
+
+            if (this.riding != null) {
+                pk.links = new EntityLink[1];
+                pk.links[0] = new EntityLink(this.riding.getId(), this.getId(), EntityLink.TYPE_RIDER, true, true);
+            }
+
             player.dataPacket(pk);
 
             this.inventory.sendArmorContents(player);
             this.offhandInventory.sendContents(player);
-
-            if (this.riding != null) {
-                SetEntityLinkPacket pkk = new SetEntityLinkPacket();
-                pkk.vehicleUniqueId = this.riding.getId();
-                pkk.riderUniqueId = this.getId();
-                pkk.type = 1;
-                pkk.immediate = 1;
-
-                player.dataPacket(pkk);
-            }
 
             if (!(this instanceof Player)) {
                 this.server.removePlayerListData(this.getUniqueId(), player);
