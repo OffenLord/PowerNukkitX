@@ -189,12 +189,22 @@ public class EntityHuman extends EntityHumanType {
             pk.item = this.getInventory().getItemInHand();
             pk.metadata = this.dataProperties;
 
-            if (this.riding != null) {
-                pk.links = new EntityLink[1];
-                pk.links[0] = new EntityLink(this.riding.getId(), this.getId(), EntityLink.TYPE_RIDER, true, true);
+            pk.links = new EntityLink[this.passengers.size()];
+            for (int i = 0; i < pk.links.length; i++) {
+                pk.links[i] = new EntityLink(this.getId(), this.passengers.get(i).getId(), i == 0 ? EntityLink.TYPE_RIDER : EntityLink.TYPE_PASSENGER, false, false);
             }
 
             player.dataPacket(pk);
+
+            if (this.riding != null) {
+                this.riding.spawnTo(player);
+                SetEntityLinkPacket pkk = new SetEntityLinkPacket();
+                pkk.vehicleUniqueId = this.riding.getId();
+                pkk.riderUniqueId = this.getId();
+                pkk.type = EntityLink.TYPE_RIDER;
+                pkk.immediate = 1;
+                player.dataPacket(pkk);
+            }
 
             this.inventory.sendArmorContents(player);
             this.offhandInventory.sendContents(player);
