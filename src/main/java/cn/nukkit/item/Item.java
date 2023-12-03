@@ -728,14 +728,14 @@ public class Item implements Cloneable, BlockID, ItemID {
 
     @PowerNukkitXOnly
     @Since("1.6.0.0-PNX")
-    public static HashMap<String, Supplier<? extends Item>> getCustomItems() {
-        return new HashMap<>(CUSTOM_ITEMS);
+    public static HashMap<String, Supplier<Item>> getCustomItems() {
+        return CUSTOM_ITEMS;
     }
 
     @PowerNukkitXOnly
     @Since("1.19.31-r1")
     public static HashMap<String, CustomItemDefinition> getCustomItemDefinition() {
-        return new HashMap<>(CUSTOM_ITEM_DEFINITIONS);
+        return CUSTOM_ITEM_DEFINITIONS;
     }
 
     /**
